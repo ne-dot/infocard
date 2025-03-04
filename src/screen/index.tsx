@@ -9,6 +9,7 @@ import ProfileScreen from './ProfileScreen';
 import LoginScreen from './LoginScreen';
 import RegisterScreen from './RegisterScreen';
 import { Screens } from './navigation';
+import { useThemeColors } from '../theme/colors';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -25,11 +26,18 @@ const FavoriteIcon = ({ color, size }: IconProps) => <Icon name="favorite" size=
 const ProfileIcon = ({ color, size }: IconProps) => <Icon name="person" size={size} color={color} />;
 
 const TabNavigator = () => {
+  const colors = useThemeColors();
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: '#007AFF',
-        tabBarInactiveTintColor: '#8E8E93',
+        tabBarActiveTintColor: colors.text,
+        tabBarInactiveTintColor: colors.tabBarInactiveTintColor,
+        tabBarStyle: {
+          backgroundColor: colors.tabBarBackground,
+          borderTopWidth: 0, // 去掉顶部边框线
+          elevation: 0, // 去掉 Android 上的阴影
+          shadowOpacity: 0, // 去掉 iOS 上的阴影
+        },
       }}
     >
       <Tab.Screen
@@ -38,6 +46,7 @@ const TabNavigator = () => {
         options={{
           title: '首页',
           tabBarIcon: HomeIcon,
+          headerShown: false,
         }}
       />
       <Tab.Screen
@@ -46,6 +55,7 @@ const TabNavigator = () => {
         options={{
           title: '收藏',
           tabBarIcon: FavoriteIcon,
+          headerShown: false,
         }}
       />
       <Tab.Screen
@@ -54,6 +64,7 @@ const TabNavigator = () => {
         options={{
           title: '我的',
           tabBarIcon: ProfileIcon,
+          headerShown: false,
         }}
       />
     </Tab.Navigator>
@@ -63,7 +74,12 @@ const TabNavigator = () => {
 // 主导航栈
 const RootStack = () => {
   return (
-    <Stack.Navigator initialRouteName={Screens.MainTab}>
+    <Stack.Navigator
+      initialRouteName={Screens.MainTab}
+      screenOptions={{
+        headerShown: false, // 隐藏所有页面的导航栏
+      }}
+      >
       <Stack.Screen
         name={Screens.MainTab}
         component={TabNavigator}
