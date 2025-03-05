@@ -1,13 +1,14 @@
 
 import * as React from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useThemeColors } from '../theme/colors';
-import NavigationHeader from '../components/NavigationHeader'
+import NavigationHeader from '../components/NavigationHeader';
+import { useTypedNavigation, Screens } from './navigation';
 
 const HomeScreen = () => {
-  const [searchText, setSearchText] = React.useState('');
   const colors = useThemeColors();
+  const { navigateTo } = useTypedNavigation();
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -16,19 +17,18 @@ const HomeScreen = () => {
         <Text style={[styles.greeting, { color: colors.text }]}>Hey ne zz, how can I help?</Text>
       </View>
       <View style={styles.searchContainer}>
-        <View style={[styles.searchInputContainer, { backgroundColor: colors.searchBackground }]}>
+        <TouchableOpacity 
+          style={[styles.searchInputContainer, { backgroundColor: colors.searchBackground }]}
+          onPress={() => navigateTo(Screens.Search)}
+        >
           <Icon name="search" size={24} color={colors.iconColor} style={styles.searchIcon} />
-          <TextInput
-            style={[styles.searchInput, { color: colors.searchText }]}
-            placeholder="Message Copilot"
-            value={searchText}
-            onChangeText={setSearchText}
-            placeholderTextColor={colors.searchPlaceholder}
-          />
+          <Text style={[styles.searchPlaceholder, { color: colors.searchPlaceholder }]}>
+            Message Copilot
+          </Text>
           <TouchableOpacity style={styles.micButton}>
             <Icon name="mic" size={24} color={colors.iconColor} />
           </TouchableOpacity>
-        </View>
+        </TouchableOpacity>
       </View>
       {/* 这里可以添加搜索结果或其他内容 */}
     </SafeAreaView>
@@ -63,10 +63,9 @@ const styles = StyleSheet.create({
   searchIcon: {
     marginRight: 10,
   },
-  searchInput: {
+  searchPlaceholder: {
     flex: 1,
     fontSize: 16,
-    height: '100%',
   },
   micButton: {
     padding: 5,

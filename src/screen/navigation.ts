@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 
+// 在 Screens 对象中添加搜索页面
 export const Screens = {
   MainTab: 'MainTab',
   Home: 'Home',

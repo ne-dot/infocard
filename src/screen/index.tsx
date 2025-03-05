@@ -71,31 +71,27 @@ const TabNavigator = () => {
   );
 };
 
+// 导入搜索页面
+import SearchScreen from './SearchScreen';
+
 // 主导航栈
 const RootStack = () => {
   return (
     <Stack.Navigator
       initialRouteName={Screens.MainTab}
       screenOptions={{
-        headerShown: false, // 隐藏所有页面的导航栏
+        headerShown: false,
       }}
-      >
+    >
       <Stack.Screen
         name={Screens.MainTab}
         component={TabNavigator}
         options={{ headerShown: false }}
       />
       <Stack.Screen name={Screens.Detail} component={DetailScreen} />
-      <Stack.Screen
-        name={Screens.Login}
-        component={LoginScreen}
-        options={{ title: '登录' }}
-      />
-      <Stack.Screen
-        name={Screens.Register}
-        component={RegisterScreen}
-        options={{ title: '注册' }}
-      />
+      <Stack.Screen name={Screens.Search} component={SearchScreen} />
+      <Stack.Screen name={Screens.Login} component={LoginScreen} />
+      <Stack.Screen name={Screens.Register} component={RegisterScreen} />
     </Stack.Navigator>
   );
 };
