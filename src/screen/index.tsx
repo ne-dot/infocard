@@ -11,6 +11,7 @@ import RegisterScreen from './RegisterScreen';
 import { Screens } from './navigation';
 import { useThemeColors } from '../theme/colors';
 import SearchScreen from './search';
+import WebViewScreen from './WebViewScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -91,6 +92,7 @@ const RootStack = () => {
       <Stack.Screen name={Screens.Search} component={SearchScreen} />
       <Stack.Screen name={Screens.Login} component={LoginScreen} />
       <Stack.Screen name={Screens.Register} component={RegisterScreen} />
+      <Stack.Screen name={Screens.WebView} component={WebViewScreen} />
     </Stack.Navigator>
   );
 };

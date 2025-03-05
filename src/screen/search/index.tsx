@@ -11,16 +11,16 @@ import ThinkingIndicator from './components/ThinkingIndicator';
 const SearchScreen = () => {
   const colors = useThemeColors();
   // 使用搜索状态
-  const { 
-    query, 
+  const {
+    query,
     gptSummary,
-    googleResults, 
-    loading, 
+    googleResults,
+    loading,
     thinking,
-    error, 
-    setQuery, 
-    search, 
-    clearResults 
+    error,
+    setQuery,
+    search,
+    clearResults,
   } = useSearchStore();
 
   // 处理搜索输入变化
@@ -41,8 +41,9 @@ const SearchScreen = () => {
 
   // 渲染列表头部
   const renderListHeader = () => {
-    if (!gptSummary && !thinking) return null;
-    
+    if (!gptSummary && !thinking) {
+      return null;
+    }
     return (
       <View style={styles.listHeader}>
         {thinking ? (
@@ -76,8 +77,8 @@ const SearchScreen = () => {
             </TouchableOpacity>
           )}
         </View>
-        <TouchableOpacity 
-          style={[styles.searchButton, { backgroundColor: colors.text }]} 
+        <TouchableOpacity
+          style={[styles.searchButton, { backgroundColor: colors.text }]}
           onPress={handleSearch}
           disabled={loading}
         >

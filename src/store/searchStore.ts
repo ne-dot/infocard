@@ -15,7 +15,6 @@ interface SearchState {
   thinking: boolean;
   // 错误信息
   error: string | null;
-  
   // 操作方法
   setQuery: (query: string) => void;
   search: () => Promise<void>;
@@ -31,41 +30,35 @@ export const useSearchStore = create<SearchState>((set, get) => ({
   loading: false,
   thinking: false,
   error: null,
-  
   // 设置搜索查询
   setQuery: (query) => set({ query }),
-  
   // 执行搜索
   search: async () => {
     const { query } = get();
-    
     if (!query.trim()) {
       set({ gptSummary: null, googleResults: [], error: null });
       return;
     }
-    
     set({ loading: true, thinking: true, error: null });
-    
     try {
       // 调用搜索API
       const response = await api.post<SearchResponse>('/api/search', { query });
-      
-      set({ 
+      console.log('搜索结果:', response.google_results);
+      set({
         gptSummary: response.gpt_summary,
         googleResults: response.google_results,
         loading: false,
-        thinking: false
+        thinking: false,
       });
     } catch (error) {
       console.error('搜索失败:', error);
-      set({ 
-        error: '搜索失败，请稍后重试', 
+      set({
+        error: '搜索失败，请稍后重试',
         loading: false,
-        thinking: false
+        thinking: false,
       });
     }
   },
-  
   // 清除搜索结果
   clearResults: () => set({ gptSummary: null, googleResults: [], error: null }),
 }));

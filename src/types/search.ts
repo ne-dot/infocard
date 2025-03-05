@@ -13,6 +13,7 @@ export interface GoogleResult {
   snippet: string;
   link: string;
   thumbnail_link: string | null;
+  content_link: string;
   type: 'text' | 'image' | 'video' | string;
   date: string;
 }

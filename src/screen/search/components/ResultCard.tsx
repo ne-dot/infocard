@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Linking } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { GoogleResult } from '../../../types/search';
 import { useFavoriteStore } from '../../../store/favoriteStore';
+import { useWebViewStore } from '../../../store/webviewStore';
+import { Screens, useTypedNavigation } from '../../navigation';
 
 interface ResultCardProps {
   item: GoogleResult;
@@ -11,11 +13,16 @@ interface ResultCardProps {
 
 const ResultCard: React.FC<ResultCardProps> = ({ item, colors }) => {
   const { addFavorite, removeFavorite, isFavorite } = useFavoriteStore();
+  const { setSelectedResult } = useWebViewStore();
   const favorited = isFavorite(item.id);
+  const navigation = useTypedNavigation();
 
   const handleOpenLink = () => {
-    if (item.link) {
-      Linking.openURL(item.link);
+    if (item.content_link) {
+      // 设置选中的GoogleResult
+      setSelectedResult(item);
+      // 导航到WebView页面
+      navigation.navigateTo(Screens.WebView);
     }
   };
 
@@ -59,9 +66,9 @@ const ResultCard: React.FC<ResultCardProps> = ({ item, colors }) => {
           </TouchableOpacity>
         </View>
       </View>
-      {item.thumbnail_link && (
+      {item.link && (
         <Image 
-          source={{ uri: item.thumbnail_link }} 
+          source={{ uri: item.link }} 
           style={styles.cardImage}
           resizeMode="cover"
         />

@@ -12,6 +12,7 @@ export const Screens = {
   // 添加登录和注册页面
   Login: 'Login',
   Register: 'Register',
+  WebView: 'WebView',
 };
 
 // 封装导航函数

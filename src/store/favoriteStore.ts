@@ -15,13 +15,10 @@ export type FavoriteItem = {
 interface FavoriteState {
   // 收藏列表
   favorites: FavoriteItem[];
-  
   // 添加收藏
   addFavorite: (item: GoogleResult | GPTSummary, type: 'google' | 'gpt') => void;
-  
   // 移除收藏
   removeFavorite: (id: string) => void;
-  
   // 检查是否已收藏
   isFavorite: (id: string) => boolean;
 }
@@ -32,17 +29,14 @@ export const useFavoriteStore = create<FavoriteState>()(
     (set, get) => ({
       // 初始状态
       favorites: [],
-      
       // 添加收藏
       addFavorite: (item, type) => {
         const { favorites } = get();
         const id = item.id;
-        
         // 检查是否已经收藏
         if (favorites.some(fav => fav.id === id)) {
           return;
         }
-        
         set({
           favorites: [
             ...favorites,
@@ -55,7 +49,6 @@ export const useFavoriteStore = create<FavoriteState>()(
           ],
         });
       },
-      
       // 移除收藏
       removeFavorite: (id) => {
         const { favorites } = get();
@@ -63,7 +56,6 @@ export const useFavoriteStore = create<FavoriteState>()(
           favorites: favorites.filter(item => item.id !== id),
         });
       },
-      
       // 检查是否已收藏
       isFavorite: (id) => {
         const { favorites } = get();
