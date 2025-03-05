@@ -4,12 +4,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import HomeScreen from './HomeScreen';
 import DetailScreen from './DetailScreen';
-import FavoriteScreen from './FavoriteScreen';
+import FavoriteScreen from './favorite';
 import ProfileScreen from './ProfileScreen';
 import LoginScreen from './LoginScreen';
 import RegisterScreen from './RegisterScreen';
 import { Screens } from './navigation';
 import { useThemeColors } from '../theme/colors';
+import SearchScreen from './search';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -71,8 +72,6 @@ const TabNavigator = () => {
   );
 };
 
-// 导入搜索页面
-import SearchScreen from './SearchScreen';
 
 // 主导航栈
 const RootStack = () => {

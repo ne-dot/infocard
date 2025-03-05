@@ -1,82 +1,12 @@
 import * as React from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, SafeAreaView, FlatList, Image, Linking } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, SafeAreaView, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { useThemeColors } from '../theme/colors';
-import NavigationHeader from '../components/NavigationHeader';
-import { useSearchStore } from '../store/searchStore';
-import { GoogleResult } from '../types/search';
-
-// 结果卡片组件
-const ResultCard = ({ item, colors }: { item: GoogleResult, colors: any }) => {
-  const handleOpenLink = () => {
-    if (item.link) {
-      Linking.openURL(item.link);
-    }
-  };
-
-  return (
-    <TouchableOpacity 
-      style={[styles.card, { backgroundColor: colors.searchBackground }]}
-      onPress={handleOpenLink}
-    >
-      <View style={styles.cardContent}>
-        <Text style={[styles.cardTitle, { color: colors.text }]} numberOfLines={2}>
-          {item.title}
-        </Text>
-        <Text style={[styles.cardSnippet, { color: colors.searchPlaceholder }]} numberOfLines={3}>
-          {item.snippet}
-        </Text>
-        <Text style={[styles.cardLink, { color: '#4285F4' }]} numberOfLines={1}>
-          {item.link}
-        </Text>
-        <Text style={[styles.cardDate, { color: colors.searchPlaceholder }]}>
-          {item.date}
-        </Text>
-      </View>
-      {item.thumbnail_link && (
-        <Image 
-          source={{ uri: item.thumbnail_link }} 
-          style={styles.cardImage}
-          resizeMode="cover"
-        />
-      )}
-    </TouchableOpacity>
-  );
-};
-
-// GPT摘要卡片组件
-const GPTSummaryCard = ({ colors }: { colors: any }) => {
-  const { gptSummary } = useSearchStore();
-  if (!gptSummary) return null;
-  return (
-    <View style={[styles.summaryCard, { backgroundColor: colors.searchBackground }]}>
-      <View style={styles.summaryHeader}>
-        <Icon name="lightbulb" size={24} color="#FFC107" />
-        <Text style={[styles.summaryTitle, { color: colors.text }]}>
-          AI 摘要
-        </Text>
-      </View>
-      <Text style={[styles.summaryContent, { color: colors.text }]}>
-        {gptSummary.content}
-      </Text>
-      <Text style={[styles.summaryDate, { color: colors.searchPlaceholder }]}>
-        {gptSummary.date}
-      </Text>
-    </View>
-  );
-};
-
-// 思考状态组件
-const ThinkingIndicator = ({ colors }: { colors: any }) => {
-  return (
-    <View style={styles.thinkingContainer}>
-      <ActivityIndicator size="small" color={colors.text} />
-      <Text style={[styles.thinkingText, { color: colors.text }]}>
-        思考中...
-      </Text>
-    </View>
-  );
-};
+import { useThemeColors } from '../../theme/colors';
+import NavigationHeader from '../../components/NavigationHeader';
+import { useSearchStore } from '../../store/searchStore';
+import ResultCard from './components/ResultCard';
+import GPTSummaryCard from './components/GPTSummaryCard';
+import ThinkingIndicator from './components/ThinkingIndicator';
 
 const SearchScreen = () => {
   const colors = useThemeColors();
@@ -231,82 +161,6 @@ const styles = StyleSheet.create({
   },
   listHeader: {
     marginBottom: 16,
-  },
-  card: {
-    borderRadius: 12,
-    marginBottom: 16,
-    padding: 16,
-    flexDirection: 'row',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  cardContent: {
-    flex: 1,
-  },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 8,
-  },
-  cardSnippet: {
-    fontSize: 14,
-    marginBottom: 8,
-  },
-  cardLink: {
-    fontSize: 12,
-    marginBottom: 4,
-  },
-  cardDate: {
-    fontSize: 12,
-  },
-  cardImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 8,
-    marginLeft: 12,
-  },
-  summaryCard: {
-    borderRadius: 12,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  summaryHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  summaryTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginLeft: 8,
-  },
-  summaryContent: {
-    fontSize: 16,
-    lineHeight: 24,
-    marginBottom: 8,
-  },
-  summaryDate: {
-    fontSize: 12,
-    textAlign: 'right',
-  },
-  thinkingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 12,
-  },
-  thinkingText: {
-    marginLeft: 10,
-    fontSize: 16,
   },
   loadingContainer: {
     padding: 20,

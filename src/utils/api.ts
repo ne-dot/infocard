@@ -1,13 +1,13 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import config from '../config';
+import projectConfig from '../config';
 
 // 从配置文件中获取API基础URL
-const BASE_URL = config.API_URL;
+const BASE_URL = projectConfig.API_URL;
 
 // 创建axios实例
 const instance = axios.create({
   baseURL: BASE_URL,
-  timeout: 100000, 
+  timeout: 1000000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -67,14 +67,12 @@ const retryRequest = async <T>(
     if (retries <= 0) {
       throw error;
     }
-    
     // 如果是超时错误，等待一段时间后重试
     if (axios.isAxiosError(error) && error.message.includes('timeout')) {
       console.log(`请求超时，${delay}ms后重试，剩余重试次数: ${retries - 1}`);
       await new Promise(resolve => setTimeout(resolve, delay));
       return retryRequest(requestFn, retries - 1, delay * 1.5);
     }
-    
     throw error;
   }
 };

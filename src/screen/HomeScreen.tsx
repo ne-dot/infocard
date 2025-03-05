@@ -17,7 +17,7 @@ const HomeScreen = () => {
         <Text style={[styles.greeting, { color: colors.text }]}>Hey ne zz, how can I help?</Text>
       </View>
       <View style={styles.searchContainer}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.searchInputContainer, { backgroundColor: colors.searchBackground }]}
           onPress={() => navigateTo(Screens.Search)}
         >
