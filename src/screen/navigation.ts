@@ -21,5 +21,8 @@ export const useTypedNavigation = () => {
   const navigateTo = (screenName: string) => {
     navigation.navigate(screenName as never);
   };
-  return { navigateTo };
+  const goBack = () => {
+    navigation.goBack();
+  };
+  return { navigateTo, goBack };
 };

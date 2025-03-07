@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import api from '../utils/api';
 import { SearchResponse, GPTSummary, GoogleResult } from '../types/search';
+import { API_PATHS } from '../constants/apiPaths';
 
 // 定义搜索状态接口
 interface SearchState {
@@ -42,8 +43,7 @@ export const useSearchStore = create<SearchState>((set, get) => ({
     set({ loading: true, thinking: true, error: null });
     try {
       // 调用搜索API
-      const response = await api.post<SearchResponse>('/api/search', { query });
-      console.log('搜索结果:', response.google_results);
+      const response = await api.post<SearchResponse>(API_PATHS.SEARCH.SEARCH, { query });
       set({
         gptSummary: response.gpt_summary,
         googleResults: response.google_results,

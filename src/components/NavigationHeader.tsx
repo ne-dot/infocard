@@ -35,7 +35,7 @@ const NavigationHeader: React.FC<NavigationHeaderProps> = ({
           </TouchableOpacity>
         )}
       </View>
-      <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
+      <Text numberOfLines={1} style={[styles.title, { color: colors.text }]}>{title}</Text>
       <View style={styles.rightContainer}>
         {rightComponent || <View style={styles.placeholder} />}
       </View>
