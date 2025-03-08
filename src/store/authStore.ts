@@ -1,11 +1,13 @@
 import { create } from 'zustand';
 import api from '../utils/api';
-import { User, UserInfoResponse, LoginResponse } from '../types/auth';
+import { User, UserData, LoginData } from '../types/auth';
+import { ApiResponse } from '../types/api';  // 导入新的类型
 import { API_PATHS } from '../constants/apiPaths';
 import { STORAGE_KEYS } from '../constants/storageKeys';
 import { storage } from '../utils/storage';
 
 // 定义认证状态接口
+// 在 AuthState 接口中修改 login 方法的签名
 interface AuthState {
   // 用户信息
   user: User | null;
@@ -25,7 +27,7 @@ interface AuthState {
   registerSuccess: boolean;
   // 操作方法
   register: (username: string, password: string, email: string) => Promise<boolean>;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (account: string, password: string, accountType?: 'email' | 'username') => Promise<boolean>;
   logout: () => Promise<void>;
   fetchUserInfo: () => Promise<boolean>;
   clearError: () => void;
@@ -74,45 +76,61 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ loading: true, error: null, registerSuccess: false });
     try {
       // 修改API路径，确保与后端接口一致
-      await api.post(API_PATHS.AUTH.REGISTER, { username, email, password });
-      set({ loading: false, registerSuccess: true });
+      const response = await api.post<ApiResponse<UserData>>(API_PATHS.AUTH.REGISTER, { username, email, password });
+      // 解析返回的用户数据
+      if (response.success && response.data) {
+        // 更新用户信息，但不设置token（因为注册后还需要登录）
+        set({
+          loading: false,
+          registerSuccess: true,
+        });
+      } else {
+        set({ loading: false, registerSuccess: false });
+        throw new Error(response.message || '注册失败');
+      }
       return true;
     } catch (error: any) {
-      console.error('注册失败:', error);
+      console.error('注册失败:', error.message);
       set({
-        error: error.response?.data?.message || '注册失败，请稍后重试',
+        error: error.response?.data?.message || error.message || '注册失败，请稍后重试',
         loading: false,
       });
-      return false;
+      throw new Error(error.message || '注册失败');
     }
   },
   // 登录方法
-  login: async (email, password) => {
+  login: async (account, password, accountType = 'email') => {
     set({ loading: true, error: null });
     try {
-      // 使用API常量
-      const response = await api.post<LoginResponse>(API_PATHS.AUTH.LOGIN, { email, password });
-      // 使用定义的接口类型来解构响应数据
-      const { accessToken, tokenType, expiresIn, refreshToken } = response;
-      set({
-        token: accessToken,
-        refreshToken: refreshToken,
-        expiresIn: expiresIn,
-        tokenType: tokenType,
-        loading: false,
-      });
-      // 使用封装的storage工具和常量键保存token
-      await storage.setItem(STORAGE_KEYS.AUTH.ACCESS_TOKEN, accessToken);
-      await storage.setItem(STORAGE_KEYS.AUTH.REFRESH_TOKEN, refreshToken);
-      await storage.setItem(STORAGE_KEYS.AUTH.EXPIRES_IN, expiresIn);
-      await storage.setItem(STORAGE_KEYS.AUTH.TOKEN_TYPE, tokenType);
-      // 登录成功后获取用户信息
-      await get().fetchUserInfo();
-      return true;
+      // 构建登录参数
+      const loginParams = accountType === 'email'
+        ? { username_or_email: account, password }
+        : { username_or_email: account, password };
+      // 使用API常量和通用响应接口
+      const response = await api.post<ApiResponse<LoginData>>(API_PATHS.AUTH.LOGIN, loginParams);
+      if (response.success && response.data) {
+        // 使用定义的接口类型来解构响应数据，注意属性名已改为小驼峰
+        const { access_token, token_type, expires_in, refresh_token } = response.data;
+        set({
+          token: access_token,
+          refreshToken: refresh_token,
+          expiresIn: expires_in,
+          tokenType: token_type,
+          loading: false,
+        });
+        // 使用封装的storage工具和常量键保存token
+        await storage.setItem(STORAGE_KEYS.AUTH.ACCESS_TOKEN, access_token);
+        await storage.setItem(STORAGE_KEYS.AUTH.REFRESH_TOKEN, refresh_token);
+        await storage.setItem(STORAGE_KEYS.AUTH.EXPIRES_IN, expires_in);
+        await storage.setItem(STORAGE_KEYS.AUTH.TOKEN_TYPE, token_type);
+        return true;
+      } else {
+        throw new Error(response.message || '登录失败');
+      }
     } catch (error: any) {
       console.error('登录失败:', error);
       set({
-        error: error.response?.data?.message || '登录失败，请稍后重试',
+        error: error.response?.data?.message || error.message || '登录失败，请稍后重试',
         loading: false,
       });
       return false;
@@ -120,29 +138,29 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
   // 获取用户信息方法
   fetchUserInfo: async () => {
-    const { token, tokenType } = get();
-    if (!token || !tokenType) {
+    const { token } = get();
+    if (!token) {
       console.error('获取用户信息失败: 未登录');
       return false;
     }
     try {
-      // 使用API常量
-      const userResponse = await api.get<UserInfoResponse>(API_PATHS.AUTH.USER_INFO, {
-        headers: {
-          Authorization: `${tokenType} ${token}`,
-        },
-      });
-      // 将API返回的数据结构转换为应用中使用的User结构，注意属性名已改为小驼峰
-      const user: User = {
-        id: userResponse.userId,
-        username: userResponse.username,
-        email: userResponse.email,
-        createdAt: userResponse.createdAt,
-        lastLogin: userResponse.lastLogin,
-      };
-      set({ user });
-      return true;
-    } catch (error) {
+      // 使用API常量和通用响应接口，不需要手动传递token
+      const response = await api.get<ApiResponse<UserData>>(API_PATHS.AUTH.USER_INFO);
+      if (response.success && response.data) {
+        // 将API返回的数据结构转换为应用中使用的User结构，注意属性名已改为小驼峰
+        const user: User = {
+          id: response.data.user_id,
+          username: response.data.username,
+          email: response.data.email,
+          createdAt: response.data.created_at,
+          lastLogin: response.data.last_login,
+        };
+        set({ user });
+        return true;
+      } else {
+        throw new Error(response.message || '获取用户信息失败');
+      }
+    } catch (error: any) {
       console.error('获取用户信息失败:', error);
       return false;
     }

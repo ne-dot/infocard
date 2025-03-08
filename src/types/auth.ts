@@ -3,23 +3,23 @@ export interface User {
   id: string;
   username: string;
   email: string;
-  createdAt: string;
-  lastLogin: string;
+  createdAt: number;
+  lastLogin: number | null;
 }
 
-// 定义用户信息响应接口
-export interface UserInfoResponse {
-  userId: string;  // 改为小驼峰
+// 定义用户数据接口
+export interface UserData {
+  user_id: string;  // 改为小驼峰
   username: string;
   email: string;
-  createdAt: string;  // 改为小驼峰
-  lastLogin: string;  // 改为小驼峰
+  created_at: number;  // 改为小驼峰
+  last_login: number | null;  // 改为小驼峰
 }
 
-// 定义登录响应接口
-export interface LoginResponse {
-  accessToken: string;  // 改为小驼峰
-  tokenType: string;    // 改为小驼峰
-  expiresIn: number;    // 改为小驼峰
-  refreshToken: string; // 改为小驼峰
+// 定义登录响应数据接口
+export interface LoginData {
+  access_token: string;  // 登录token
+  refresh_token: string;  // 刷新token
+  token_type: string;
+  expires_in: number;  // 过期时间
 }

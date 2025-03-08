@@ -16,20 +16,74 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useThemeColors } from '../../theme/colors';
 import { useTypedNavigation } from '../navigation';
 import Header from '../../components/NavigationHeader';
+import { useAuthStore } from '../../store/authStore';
+import Toast from 'react-native-toast-message';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+// 导入 Toast 工具
+import { showSuccessToast, showErrorToast } from '../../utils/toast';
+// 导入 loading hook
+import { useLoading } from '../../components/Loading';
+// 导入加密工具
+import { AESTool } from '../../utils/crypto';
 
 // 获取屏幕宽度
 const screenWidth = Dimensions.get('window').width;
 
 const LoginScreen: React.FC = () => {
   const colors = useThemeColors();
+  const inserts = useSafeAreaInsets();
   const navigation = useTypedNavigation();
-  const [email, setEmail] = React.useState('');
+  // 将 email 改为 account，表示账号可以是邮箱或用户名
+  const [account, setAccount] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [showPassword, setShowPassword] = React.useState(false);
 
-  const handleLogin = () => {
-    // 实现登录逻辑
-    console.log('登录信息:', { email, password });
+  // 从 authStore 中获取登录方法和状态
+  const { login, loading, error, fetchUserInfo } = useAuthStore();
+  // 使用 loading hook
+  const { showLoading, hideLoading } = useLoading();
+
+  // 监听 loading 状态变化
+  React.useEffect(() => {
+    if (loading) {
+      showLoading('登录中...');
+    } else {
+      hideLoading();
+    }
+  }, [loading, showLoading, hideLoading]);
+
+  const handleLogin = async () => {
+    // 表单验证
+    if (!account || !password) {
+      showErrorToast('请输入账号和密码');
+      return;
+    }
+
+    try {
+      // 对密码进行加密
+      const encryptedPassword = AESTool.encrypt(password);
+      // 判断输入的是邮箱还是用户名
+      const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(account);
+      // 调用登录接口，根据输入类型传递不同参数
+      if (isEmail) {
+        await login(account, encryptedPassword, 'email');
+      } else {
+        await login(account, encryptedPassword, 'username');
+      }
+      // 如果有错误，显示错误信息
+      if (error) {
+        showErrorToast(error || '登录失败');
+        return;
+      }
+
+      await fetchUserInfo();
+      showSuccessToast('登录成功');
+      // 登录成功后，跳转到首页
+      navigation.goBack();
+    } catch (err) {
+      console.error('登录过程中出错:', err);
+      showErrorToast('登录过程中出现错误，请稍后再试');
+    }
   };
 
   const handleRegister = () => {
@@ -62,15 +116,16 @@ const LoginScreen: React.FC = () => {
             <View style={[styles.inputContainer, {backgroundColor: colors.textBackground}]}>
               <TextInput
                 style={[styles.input]}
-                placeholder="邮箱地址"
+                placeholder="邮箱或用户名"
                 placeholderTextColor="#666"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
+                value={account}
+                onChangeText={setAccount}
                 autoCapitalize="none"
               />
             </View>
 
+            {/* 密码输入框和其他UI保持不变 */}
+            
             <View style={[styles.inputContainer, {backgroundColor: colors.textBackground}]}>
               <TextInput
                 style={[styles.input]}
@@ -134,6 +189,7 @@ const LoginScreen: React.FC = () => {
             </Text>
           </View>
         </KeyboardAvoidingView>
+        <Toast topOffset={inserts.top}/>
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );

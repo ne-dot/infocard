@@ -2,6 +2,9 @@ import { create } from 'zustand';
 import api from '../utils/api';
 import { SearchResponse, GPTSummary, GoogleResult } from '../types/search';
 import { API_PATHS } from '../constants/apiPaths';
+import { ApiResponse } from '../types/api';
+
+type SearchResponseData = ApiResponse<SearchResponse>;
 
 // 定义搜索状态接口
 interface SearchState {
@@ -43,13 +46,19 @@ export const useSearchStore = create<SearchState>((set, get) => ({
     set({ loading: true, thinking: true, error: null });
     try {
       // 调用搜索API
-      const response = await api.post<SearchResponse>(API_PATHS.SEARCH.SEARCH, { query });
-      set({
-        gptSummary: response.gpt_summary,
-        googleResults: response.google_results,
-        loading: false,
-        thinking: false,
-      });
+      const response = await api.post<SearchResponseData>(API_PATHS.SEARCH.SEARCH, { query });
+
+      if (response.success && response.data) {
+        const { gpt_summary, google_results } = response.data;
+        set({
+          gptSummary: gpt_summary,
+          googleResults: google_results,
+          loading: false,
+          thinking: false,
+        });
+      } else {
+        throw new Error(response.message || '搜索失败');
+      }
     } catch (error) {
       console.error('搜索失败:', error);
       set({

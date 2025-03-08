@@ -115,9 +115,9 @@ const RegisterScreen: React.FC = () => {
       if (error) {
         showErrorToast(error || '未知错误');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('注册过程中出错:', err);
-      showErrorToast('注册过程中出现错误，请稍后再试');
+      showErrorToast(err.message || '注册过程中出现错误，请稍后再试');
     }
   };
 
