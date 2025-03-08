@@ -2,6 +2,11 @@ import axios, { AxiosRequestConfig } from 'axios';
 import projectConfig from '../config';
 import { storage } from '../utils/storage';
 import { STORAGE_KEYS } from '../constants/storageKeys';
+// 导入多语言工具，获取当前语言
+import { currentLang } from '../i18n';
+// 导入获取设备信息的模块
+import { Platform, Dimensions } from 'react-native';
+import DeviceInfo from 'react-native-device-info'; // 如果已安装此库
 
 // 从配置文件中获取API基础URL
 const BASE_URL = projectConfig.API_URL;
@@ -18,6 +23,23 @@ const instance = axios.create({
 // 请求拦截器
 instance.interceptors.request.use(
   (config) => {
+    // 添加当前语言到请求头
+    config.headers['Accept-Language'] = currentLang;
+
+    // 添加设备信息到请求头
+    const { width, height } = Dimensions.get('window');
+    config.headers['X-Device-Platform'] = Platform.OS;
+    config.headers['X-Device-Version'] = Platform.Version;
+    config.headers['X-Device-Screen'] = `${width}x${height}`;
+
+    // 如果安装了 react-native-device-info，可以添加更多设备信息
+    if (DeviceInfo) {
+      config.headers['X-Device-Model'] = DeviceInfo.getModel();
+      config.headers['X-Device-Brand'] = DeviceInfo.getBrand();
+      config.headers['X-App-Version'] = DeviceInfo.getVersion();
+      config.headers['X-App-Build'] = DeviceInfo.getBuildNumber();
+    }
+
     // 添加请求日志
     console.log(`🚀 发送请求: ${config.method?.toUpperCase()} ${config.url}`, {
       headers: config.headers,
