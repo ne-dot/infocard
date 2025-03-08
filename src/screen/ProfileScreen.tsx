@@ -4,6 +4,7 @@ import { useTypedNavigation, Screens } from './navigation';
 import { useAuthStore } from '../store/authStore';
 import { useThemeColors } from '../theme/colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { t } from '../i18n';
 
 const ProfileScreen = () => {
   const { navigateTo } = useTypedNavigation();
@@ -31,19 +32,19 @@ const ProfileScreen = () => {
 
           <View style={styles.infoContainer}>
             <View style={[styles.infoItem, { borderBottomColor: colors.border }]}>
-              <Text style={[styles.infoLabel, { color: colors.subText }]}>用户ID</Text>
+              <Text style={[styles.infoLabel, { color: colors.subText }]}>{t('profile.userId')}</Text>
               <Text style={[styles.infoValue, { color: colors.text }]}>{user.id}</Text>
             </View>
             <View style={[styles.infoItem, { borderBottomColor: colors.border }]}>
-              <Text style={[styles.infoLabel, { color: colors.subText }]}>注册时间</Text>
+              <Text style={[styles.infoLabel, { color: colors.subText }]}>{t('profile.registrationTime')}</Text>
               <Text style={[styles.infoValue, { color: colors.text }]}>
                 {new Date(user.createdAt).toLocaleDateString()}
               </Text>
             </View>
             <View style={styles.infoItem}>
-              <Text style={[styles.infoLabel, { color: colors.subText }]}>最后登录</Text>
+              <Text style={[styles.infoLabel, { color: colors.subText }]}>{t('profile.lastLogin')}</Text>
               <Text style={[styles.infoValue, { color: colors.text }]}>
-                {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : '首次登录'}
+                {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : t('profile.firstLogin')}
               </Text>
             </View>
           </View>
@@ -51,21 +52,21 @@ const ProfileScreen = () => {
             style={[styles.logoutButton, { backgroundColor: '#FF3B30' }]}
             onPress={handleLogout}
           >
-            <Text style={styles.logoutButtonText}>退出登录</Text>
+            <Text style={styles.logoutButtonText}>{t('profile.logout')}</Text>
           </TouchableOpacity>
         </View>
       ) : (
         // 未登录状态
         <View style={styles.loginContainer}>
-          <Text style={[styles.loginTitle, { color: colors.text }]}>您尚未登录</Text>
+          <Text style={[styles.loginTitle, { color: colors.text }]}>{t('profile.notLoggedIn')}</Text>
           <Text style={[styles.loginSubtitle, { color: colors.subText }]}>
-            登录后可以查看和管理您的个人信息
+            {t('profile.loginPrompt')}
           </Text>
           <TouchableOpacity
             style={[styles.loginButton, { backgroundColor: colors.primay }]}
             onPress={() => navigateTo(Screens.Login)}
           >
-            <Text style={styles.loginButtonText}>去登录</Text>
+            <Text style={styles.loginButtonText}>{t('profile.login')}</Text>
           </TouchableOpacity>
         </View>
       )}

@@ -1,0 +1,60 @@
+{
+  "profile": {
+    "notLoggedIn": "You are not logged in",
+    "loginPrompt": "Log in to view and manage your personal information",
+    "login": "Log In",
+    "userId": "User ID",
+    "registrationTime": "Registration Time",
+    "lastLogin": "Last Login",
+    "firstLogin": "First Login",
+    "logout": "Log Out"
+  },
+  "navigation": {
+    "home": "Home",
+    "favorite": "Favorites",
+    "profile": "Profile"
+  },
+  "login": {
+    "title": "Login to Account",
+    "noAccount": "Don't have an account?",
+    "register": "Register",
+    "emailOrUsername": "Email or Username",
+    "password": "Password",
+    "continue": "Continue",
+    "orLoginWith": "Or login with",
+    "termsAgreement": "By logging in, you agree to our",
+    "termsOfUse": "Terms of Use",
+    "and": "and",
+    "privacyPolicy": "Privacy Policy",
+    "loggingIn": "Logging in...",
+    "loginSuccess": "Login successful",
+    "loginFailed": "Login failed",
+    "loginError": "An error occurred during login, please try again later",
+    "enterAccountAndPassword": "Please enter your account and password"
+  },
+  "register": {
+    "title": "Create Account",
+    "haveAccount": "Already have an account?",
+    "login": "Login",
+    "emailAddress": "Email Address",
+    "username": "Username",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "submit": "Submit",
+    "termsAgreement": "By creating an account, you agree to our",
+    "termsOfUse": "Terms of Use",
+    "and": "and",
+    "privacyPolicy": "Privacy Policy",
+    "registering": "Registering...",
+    "registerSuccess": "Registration successful",
+    "fillAllFields": "Please fill in all fields",
+    "validEmail": "Please enter a valid email address",
+    "usernameLength": "Username must be between 2-20 characters",
+    "usernameFormat": "Username must contain at least one letter, cannot be numbers only",
+    "passwordLength": "Password must be between 6-18 characters",
+    "passwordFormat": "Password must contain a combination of letters and numbers",
+    "passwordMismatch": "The two passwords do not match",
+    "unknownError": "Unknown error",
+    "registerError": "An error occurred during registration, please try again later"
+  }
+}

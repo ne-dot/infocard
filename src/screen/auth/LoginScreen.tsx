@@ -25,6 +25,8 @@ import { showSuccessToast, showErrorToast } from '../../utils/toast';
 import { useLoading } from '../../components/Loading';
 // 导入加密工具
 import { AESTool } from '../../utils/crypto';
+// 导入多语言工具
+import { t } from '../../i18n';
 
 // 获取屏幕宽度
 const screenWidth = Dimensions.get('window').width;
@@ -46,7 +48,7 @@ const LoginScreen: React.FC = () => {
   // 监听 loading 状态变化
   React.useEffect(() => {
     if (loading) {
-      showLoading('登录中...');
+      showLoading(t('login.loggingIn'));
     } else {
       hideLoading();
     }
@@ -55,7 +57,7 @@ const LoginScreen: React.FC = () => {
   const handleLogin = async () => {
     // 表单验证
     if (!account || !password) {
-      showErrorToast('请输入账号和密码');
+      showErrorToast(t('login.enterAccountAndPassword'));
       return;
     }
 
@@ -72,17 +74,17 @@ const LoginScreen: React.FC = () => {
       }
       // 如果有错误，显示错误信息
       if (error) {
-        showErrorToast(error || '登录失败');
+        showErrorToast(error || t('login.loginFailed'));
         return;
       }
 
       await fetchUserInfo();
-      showSuccessToast('登录成功');
+      showSuccessToast(t('login.loginSuccess'));
       // 登录成功后，跳转到首页
       navigation.goBack();
     } catch (err) {
       console.error('登录过程中出错:', err);
-      showErrorToast('登录过程中出现错误，请稍后再试');
+      showErrorToast(t('login.loginError'));
     }
   };
 
@@ -105,18 +107,18 @@ const LoginScreen: React.FC = () => {
           style={styles.keyboardAvoidingView}
         >
           <View style={styles.content}>
-            <Text style={[styles.title, {color: colors.text}]}>登录账号</Text>
+            <Text style={[styles.title, {color: colors.text}]}>{t('login.title')}</Text>
             <Text style={[styles.subtitle, {color: colors.subText}]}>
-              还没有账号？
+              {t('login.noAccount')}
               <Text style={[styles.registerLink, {color: colors.primay}]} onPress={handleRegister}>
-                注册
+                {t('login.register')}
               </Text>
             </Text>
 
             <View style={[styles.inputContainer, {backgroundColor: colors.textBackground}]}>
               <TextInput
                 style={[styles.input]}
-                placeholder="邮箱或用户名"
+                placeholder={t('login.emailOrUsername')}
                 placeholderTextColor="#666"
                 value={account}
                 onChangeText={setAccount}
@@ -127,7 +129,7 @@ const LoginScreen: React.FC = () => {
             <View style={[styles.inputContainer, {backgroundColor: colors.textBackground}]}>
               <TextInput
                 style={[styles.input]}
-                placeholder="密码"
+                placeholder={t('login.password')}
                 placeholderTextColor="#666"
                 value={password}
                 onChangeText={setPassword}
@@ -149,12 +151,12 @@ const LoginScreen: React.FC = () => {
               style={[styles.loginButton, {backgroundColor: colors.primay}]}
               onPress={handleLogin}
             >
-              <Text style={styles.loginButtonText}>继续</Text>
+              <Text style={styles.loginButtonText}>{t('login.continue')}</Text>
             </TouchableOpacity>
 
             <View style={styles.dividerContainer}>
               <View style={[styles.divider, {backgroundColor: colors.searchBackground}]} />
-              <Text style={styles.dividerText}>或使用以下方式登录</Text>
+              <Text style={styles.dividerText}>{t('login.orLoginWith')}</Text>
               <View style={[styles.divider, {backgroundColor: colors.searchBackground}]} />
             </View>
 
@@ -180,10 +182,10 @@ const LoginScreen: React.FC = () => {
             </View>
 
             <Text style={styles.termsText}>
-              点击登录即表示您同意我们的
-              <Text style={[styles.termsLink, {color: colors.primay}]}> 使用条款 </Text>
-              和
-              <Text style={[styles.termsLink, {color: colors.primay}]}> 隐私政策</Text>
+              {t('login.termsAgreement')}
+              <Text style={[styles.termsLink, {color: colors.primay}]}> {t('login.termsOfUse')} </Text>
+              {t('login.and')}
+              <Text style={[styles.termsLink, {color: colors.primay}]}> {t('login.privacyPolicy')}</Text>
             </Text>
           </View>
         </KeyboardAvoidingView>

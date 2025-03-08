@@ -12,6 +12,7 @@ import { Screens } from './navigation';
 import { useThemeColors } from '../theme/colors';
 import SearchScreen from './search';
 import WebViewScreen from './WebViewScreen';
+import { t } from '../i18n'; // 导入多语言工具
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -46,7 +47,7 @@ const TabNavigator = () => {
         name={Screens.Home}
         component={HomeScreen}
         options={{
-          title: '首页',
+          title: t('navigation.home'), // 使用多语言文案
           tabBarIcon: HomeIcon,
           headerShown: false,
         }}
@@ -55,7 +56,7 @@ const TabNavigator = () => {
         name={Screens.Favorite}
         component={FavoriteScreen}
         options={{
-          title: '收藏',
+          title: t('navigation.favorite'), // 使用多语言文案
           tabBarIcon: FavoriteIcon,
           headerShown: false,
         }}
@@ -64,7 +65,7 @@ const TabNavigator = () => {
         name={Screens.Profile}
         component={ProfileScreen}
         options={{
-          title: '我的',
+          title: t('navigation.profile'), // 使用多语言文案
           tabBarIcon: ProfileIcon,
           headerShown: false,
         }}
@@ -72,7 +73,6 @@ const TabNavigator = () => {
     </Tab.Navigator>
   );
 };
-
 
 // 主导航栈
 const RootStack = () => {

@@ -1,0 +1,61 @@
+
+{
+  "profile": {
+    "notLoggedIn": "您尚未登录",
+    "loginPrompt": "登录后可以查看和管理您的个人信息",
+    "login": "去登录",
+    "userId": "用户ID",
+    "registrationTime": "注册时间",
+    "lastLogin": "最后登录",
+    "firstLogin": "首次登录",
+    "profile": "我的"
+  },
+  "navigation": {
+    "home": "首页",
+    "favorite": "收藏",
+    "profile": "我的"
+  },
+  "login": {
+    "title": "登录账号",
+    "noAccount": "还没有账号？",
+    "register": "注册",
+    "emailOrUsername": "邮箱或用户名",
+    "password": "密码",
+    "continue": "继续",
+    "orLoginWith": "或使用以下方式登录",
+    "termsAgreement": "点击登录即表示您同意我们的",
+    "termsOfUse": "使用条款",
+    "and": "和",
+    "privacyPolicy": "隐私政策",
+    "loggingIn": "登录中...",
+    "loginSuccess": "登录成功",
+    "loginFailed": "登录失败",
+    "loginError": "登录过程中出现错误，请稍后再试",
+    "enterAccountAndPassword": "请输入账号和密码"
+  },
+  "register": {
+    "title": "创建账号",
+    "haveAccount": "已有账号？",
+    "login": "登录",
+    "emailAddress": "邮箱地址",
+    "username": "用户名",
+    "password": "密码",
+    "confirmPassword": "确认密码",
+    "submit": "确定",
+    "termsAgreement": "点击创建账号即表示您同意我们的",
+    "termsOfUse": "使用条款",
+    "and": "和",
+    "privacyPolicy": "隐私政策",
+    "registering": "注册中...",
+    "registerSuccess": "注册成功",
+    "fillAllFields": "请填写完整的信息",
+    "validEmail": "请输入有效的邮箱地址",
+    "usernameLength": "用户名长度需要在2-20个字符之间",
+    "usernameFormat": "用户名必须包含至少一个字母，不能是纯数字",
+    "passwordLength": "密码长度需要在6-18个字符之间",
+    "passwordFormat": "密码必须包含字母和数字的组合",
+    "passwordMismatch": "两次输入的密码不一致",
+    "unknownError": "未知错误",
+    "registerError": "注册过程中出现错误，请稍后再试"
+  }
+}

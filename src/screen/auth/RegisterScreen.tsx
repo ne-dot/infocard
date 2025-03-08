@@ -25,6 +25,8 @@ import { showSuccessToast, showErrorToast } from '../../utils/toast';
 import { useLoading } from '../../components/Loading';
 // 导入加密工具
 import { AESTool } from '../../utils/crypto';
+// 导入多语言工具
+import { t } from '../../i18n';
 
 // 获取屏幕宽度
 const screenWidth = Dimensions.get('window').width;
@@ -48,7 +50,7 @@ const RegisterScreen: React.FC = () => {
   // 监听 loading 状态变化
   React.useEffect(() => {
     if (loading) {
-      showLoading('注册中...');
+      showLoading(t('register.registering'));
     } else {
       hideLoading();
     }
@@ -57,7 +59,7 @@ const RegisterScreen: React.FC = () => {
   // 监听注册成功状态，成功后跳转到登录页面
   React.useEffect(() => {
     if (registerSuccess) {
-      showSuccessToast('注册成功', {
+      showSuccessToast(t('register.registerSuccess'), {
         onHide: () => navigation.goBack(),
       });
       // 清除注册成功状态
@@ -68,41 +70,41 @@ const RegisterScreen: React.FC = () => {
   const handleRegister = async () => {
      // 表单验证
     if (!email || !username || !password || !confirmPassword) {
-      showErrorToast('请填写完整的信息');
+      showErrorToast(t('register.fillAllFields'));
       return;
     }
     // 验证邮箱格式
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     console.log('check', email, emailRegex.test(email));
     if (!emailRegex.test(email)) {
-      showErrorToast('请输入有效的邮箱地址');
+      showErrorToast(t('register.validEmail'));
       return;
     }
     // 验证用户名长度
     if (username.length < 2 || username.length > 20) {
-      showErrorToast('用户名长度需要在2-20个字符之间');
+      showErrorToast(t('register.usernameLength'));
       return;
     }
     // 验证用户名不能是纯数字，必须包含字母
     const usernameRegex = /^(?=.*[a-zA-Z])[\w\u4e00-\u9fa5]+$/;
     if (!usernameRegex.test(username)) {
-      showErrorToast('用户名必须包含至少一个字母，不能是纯数字');
+      showErrorToast(t('register.usernameFormat'));
       return;
     }
     // 验证密码长度
     if (password.length < 6 || password.length > 18) {
-      showErrorToast('密码长度需要在6-18个字符之间');
+      showErrorToast(t('register.passwordLength'));
       return;
     }
     // 验证密码必须包含字母和数字
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).+$/;
     if (!passwordRegex.test(password)) {
-      showErrorToast('密码必须包含字母和数字的组合');
+      showErrorToast(t('register.passwordFormat'));
       return;
     }
     // 验证两次密码是否一致
     if (password !== confirmPassword) {
-      showErrorToast('两次输入的密码不一致');
+      showErrorToast(t('register.passwordMismatch'));
       return;
     }
 
@@ -113,11 +115,11 @@ const RegisterScreen: React.FC = () => {
       await register(username, encryptedPassword, email);
       // 如果有错误，显示错误信息
       if (error) {
-        showErrorToast(error || '未知错误');
+        showErrorToast(error || t('register.unknownError'));
       }
     } catch (err: any) {
       console.error('注册过程中出错:', err);
-      showErrorToast(err.message || '注册过程中出现错误，请稍后再试');
+      showErrorToast(err.message || t('register.registerError'));
     }
   };
 
@@ -135,18 +137,18 @@ const RegisterScreen: React.FC = () => {
           style={styles.keyboardAvoidingView}
         >
           <View style={styles.content}>
-            <Text style={[styles.title, {color: colors.text}]}>创建账号</Text>
+            <Text style={[styles.title, {color: colors.text}]}>{t('register.title')}</Text>
             <Text style={[styles.subtitle, {color: colors.subText}]}>
-              已有账号？
+              {t('register.haveAccount')}
               <Text style={[styles.loginLink, {color: colors.primay}]} onPress={handleLogin}>
-                登录
+                {t('register.login')}
               </Text>
             </Text>
 
             <View style={[styles.inputContainer, {backgroundColor: colors.textBackground}]}>
               <TextInput
                 style={[styles.input]}
-                placeholder="邮箱地址"
+                placeholder={t('register.emailAddress')}
                 placeholderTextColor="#666"
                 value={email}
                 onChangeText={setEmail}
@@ -159,7 +161,7 @@ const RegisterScreen: React.FC = () => {
             <View style={[styles.inputContainer, {backgroundColor: colors.textBackground}]}>
               <TextInput
                 style={[styles.input]}
-                placeholder="用户名"
+                placeholder={t('register.username')}
                 placeholderTextColor="#666"
                 value={username}
                 onChangeText={setUsername}
@@ -170,7 +172,7 @@ const RegisterScreen: React.FC = () => {
             <View style={[styles.inputContainer, {backgroundColor: colors.textBackground}]}>
               <TextInput
                 style={[styles.input]}
-                placeholder="密码"
+                placeholder={t('register.password')}
                 placeholderTextColor="#666"
                 value={password}
                 onChangeText={setPassword}
@@ -193,7 +195,7 @@ const RegisterScreen: React.FC = () => {
             <View style={[styles.inputContainer, {backgroundColor: colors.textBackground}]}>
               <TextInput
                 style={[styles.input]}
-                placeholder="确认密码"
+                placeholder={t('register.confirmPassword')}
                 placeholderTextColor="#666"
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
@@ -216,14 +218,14 @@ const RegisterScreen: React.FC = () => {
               style={[styles.registerButton, {backgroundColor: colors.primay}]}
               onPress={handleRegister}
             >
-              <Text style={[styles.registerButtonText, {color: "#fff"}]}>确定</Text>
+              <Text style={[styles.registerButtonText, {color: "#fff"}]}>{t('register.submit')}</Text>
             </TouchableOpacity>
 
             <Text style={styles.termsText}>
-              点击创建账号即表示您同意我们的
-              <Text style={[styles.termsLink, {color: colors.primay}]}> 使用条款 </Text>
-              和
-              <Text style={[styles.termsLink, {color: colors.primay}]}> 隐私政策</Text>
+              {t('register.termsAgreement')}
+              <Text style={[styles.termsLink, {color: colors.primay}]}> {t('register.termsOfUse')} </Text>
+              {t('register.and')}
+              <Text style={[styles.termsLink, {color: colors.primay}]}> {t('register.privacyPolicy')}</Text>
             </Text>
           </View>
         </KeyboardAvoidingView>
