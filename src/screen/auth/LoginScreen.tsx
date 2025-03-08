@@ -123,9 +123,7 @@ const LoginScreen: React.FC = () => {
                 autoCapitalize="none"
               />
             </View>
-
             {/* 密码输入框和其他UI保持不变 */}
-            
             <View style={[styles.inputContainer, {backgroundColor: colors.textBackground}]}>
               <TextInput
                 style={[styles.input]}

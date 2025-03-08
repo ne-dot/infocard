@@ -25,6 +25,8 @@ interface AuthState {
   error: string | null;
   // 注册成功状态
   registerSuccess: boolean;
+  // 登录状态
+  isLogin: boolean;
   // 操作方法
   register: (username: string, password: string, email: string) => Promise<boolean>;
   login: (account: string, password: string, accountType?: 'email' | 'username') => Promise<boolean>;
@@ -47,6 +49,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   loading: false,
   error: null,
   registerSuccess: false,
+  isLogin: false,
   // 初始化认证状态
   initAuth: async () => {
     try {
@@ -62,6 +65,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           refreshToken,
           expiresIn,
           tokenType,
+          isLogin: true, // 设置登录状态为true
         });
         // 获取用户信息
         await get().fetchUserInfo();
@@ -117,6 +121,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           expiresIn: expires_in,
           tokenType: token_type,
           loading: false,
+          isLogin: true, // 设置登录状态为true
         });
         // 使用封装的storage工具和常量键保存token
         await storage.setItem(STORAGE_KEYS.AUTH.ACCESS_TOKEN, access_token);
@@ -132,6 +137,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({
         error: error.response?.data?.message || error.message || '登录失败，请稍后重试',
         loading: false,
+        isLogin: false, // 确保登录失败时状态为false
       });
       return false;
     }
@@ -178,6 +184,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       refreshToken: null,
       expiresIn: null,
       tokenType: null,
+      isLogin: false, // 设置登录状态为false
     });
   },
   // 清除错误

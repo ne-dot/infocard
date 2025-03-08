@@ -14,6 +14,7 @@ export const Colors = {
     tabBarBackground: '#ECEDF1',
     tabBarInactiveTintColor: '#79849E',
     primay: '#208CE3',
+    border: '#e0e0e0',
   },
   dark: {
     background: '#0D1017',
@@ -27,6 +28,7 @@ export const Colors = {
     tabBarBackground: '#131823',
     tabBarInactiveTintColor: '#657391',
     primay: '#208CE3',
+    border: '#333333',
   },
 };
 
