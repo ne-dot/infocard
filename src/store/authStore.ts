@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import api from '../utils/api';
-import { User, UserData, LoginData } from '../types/auth';
+import { User, UserResponse, LoginData, AnonymousLoginResponse } from '../types/auth';
 import { ApiResponse } from '../types/api';  // 导入新的类型
 import { API_PATHS } from '../constants/apiPaths';
 import { STORAGE_KEYS } from '../constants/storageKeys';
@@ -27,15 +27,18 @@ interface AuthState {
   registerSuccess: boolean;
   // 登录状态
   isLogin: boolean;
+  // 匿名登录id
+  anonymousId: string | null;
   // 操作方法
   register: (username: string, password: string, email: string) => Promise<boolean>;
-  login: (account: string, password: string, accountType?: 'email' | 'username') => Promise<boolean>;
+  login: (account: string, password: string, accountType: 'email' | 'username') => Promise<boolean>;
   logout: () => Promise<void>;
   fetchUserInfo: () => Promise<boolean>;
   clearError: () => void;
   clearRegisterSuccess: () => void;
   // 初始化方法
   initAuth: () => Promise<void>;
+  anonymousLogin: () => Promise<void>;
 }
 
 // 创建认证状态存储
@@ -50,6 +53,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   error: null,
   registerSuccess: false,
   isLogin: false,
+  anonymousId: null,
   // 初始化认证状态
   initAuth: async () => {
     try {
@@ -80,7 +84,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ loading: true, error: null, registerSuccess: false });
     try {
       // 修改API路径，确保与后端接口一致
-      const response = await api.post<ApiResponse<UserData>>(API_PATHS.AUTH.REGISTER, { username, email, password });
+      const response = await api.post<ApiResponse<UserResponse>>(API_PATHS.AUTH.REGISTER, { username, email, password });
       // 解析返回的用户数据
       if (response.success && response.data) {
         // 更新用户信息，但不设置token（因为注册后还需要登录）
@@ -102,8 +106,49 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       throw new Error(error.message || '注册失败');
     }
   },
-  // 登录方法
-  login: async (account, password, accountType = 'email') => {
+  // 匿名登录方法
+  anonymousLogin: async () => {
+    try {
+      // 检查是否已有匿名用户ID
+      const anonymousId = await storage.getItem<string>(STORAGE_KEYS.AUTH.ANONYMOUS_ID);
+
+      if (anonymousId) {
+        // 如果已有匿名ID，直接设置状态为已匿名登录
+        console.log('已存在匿名用户ID，设置匿名登录状态');
+        set({
+          anonymousId: anonymousId,
+          loading: false,
+        });
+      } else {
+        // 创建新的匿名用户
+        const response = await api.post<AnonymousLoginResponse>('/api/users/anonymous-login');
+
+        if (response.success) {
+          // 保存匿名用户ID
+          await storage.setItem(STORAGE_KEYS.AUTH.ANONYMOUS_ID, response.data.anonymous_id);
+          // 保存用户信息
+          set({
+            isLogin: false,
+            anonymousId: response.data.anonymous_id,
+            user: response.data.user,
+            loading: false,
+          });
+        } else {
+          throw new Error(response.message || '匿名登录失败');
+        }
+      }
+    } catch (error: any) {
+      console.error('匿名登录失败:', error);
+      set({
+        loading: false,
+        error: error.message || '匿名登录失败',
+        anonymousId: null, // 确保失败时状态正确
+      });
+    }
+  },
+
+  // 修改现有的登录成功处理，在登录成功后清除匿名用户信息
+  login: async (account: string, password: string, accountType: 'email' | 'username') => {
     set({ loading: true, error: null });
     try {
       // 构建登录参数
@@ -122,12 +167,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           tokenType: token_type,
           loading: false,
           isLogin: true, // 设置登录状态为true
+          anonymousId: null, // 清除匿名用户ID
         });
         // 使用封装的storage工具和常量键保存token
         await storage.setItem(STORAGE_KEYS.AUTH.ACCESS_TOKEN, access_token);
         await storage.setItem(STORAGE_KEYS.AUTH.REFRESH_TOKEN, refresh_token);
         await storage.setItem(STORAGE_KEYS.AUTH.EXPIRES_IN, expires_in);
         await storage.setItem(STORAGE_KEYS.AUTH.TOKEN_TYPE, token_type);
+        await storage.removeItem(STORAGE_KEYS.AUTH.ANONYMOUS_ID);
         return true;
       } else {
         throw new Error(response.message || '登录失败');
@@ -151,7 +198,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
     try {
       // 使用API常量和通用响应接口，不需要手动传递token
-      const response = await api.get<ApiResponse<UserData>>(API_PATHS.AUTH.USER_INFO);
+      const response = await api.get<ApiResponse<UserResponse>>(API_PATHS.AUTH.USER_INFO);
       if (response.success && response.data) {
         // 将API返回的数据结构转换为应用中使用的User结构，注意属性名已改为小驼峰
         const user: User = {

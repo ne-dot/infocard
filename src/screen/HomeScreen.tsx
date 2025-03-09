@@ -5,8 +5,21 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useThemeColors } from '../theme/colors';
 import NavigationHeader from '../components/NavigationHeader';
 import { useTypedNavigation, Screens } from './navigation';
+import { useAuthStore } from '../store/authStore';
 
 const HomeScreen = () => {
+  const { anonymousLogin, isLogin, anonymousId } = useAuthStore();
+
+  React.useEffect(() => {
+    const checkAnonymousUser = async () => {
+      // 如果用户未登录且未匿名登录，则尝试匿名登录
+      if (!isLogin && !anonymousId) {
+        anonymousLogin();
+      }
+    };
+    checkAnonymousUser();
+  }, [isLogin, anonymousId, anonymousLogin]);
+
   const colors = useThemeColors();
   const { navigateTo } = useTypedNavigation();
 

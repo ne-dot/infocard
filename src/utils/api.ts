@@ -22,7 +22,7 @@ const instance = axios.create({
 
 // 请求拦截器
 instance.interceptors.request.use(
-  (config) => {
+  async (config) => {
     // 添加当前语言到请求头
     config.headers['Accept-Language'] = currentLang;
 
@@ -32,12 +32,19 @@ instance.interceptors.request.use(
     config.headers['X-Device-Version'] = Platform.Version;
     config.headers['X-Device-Screen'] = `${width}x${height}`;
 
+    // 添加匿名用户ID到请求头
+    const anonymousId = await storage.getItem<string>(STORAGE_KEYS.AUTH.ANONYMOUS_ID);
+    if (anonymousId) {
+      config.headers['X-Anonymous-ID'] = anonymousId;
+    }
+
     // 如果安装了 react-native-device-info，可以添加更多设备信息
     if (DeviceInfo) {
       config.headers['X-Device-Model'] = DeviceInfo.getModel();
       config.headers['X-Device-Brand'] = DeviceInfo.getBrand();
       config.headers['X-App-Version'] = DeviceInfo.getVersion();
       config.headers['X-App-Build'] = DeviceInfo.getBuildNumber();
+      config.headers['X-App-Bundle-ID'] = DeviceInfo.getBundleId(); // 添加应用的 Bundle ID
     }
 
     // 添加请求日志

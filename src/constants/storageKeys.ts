@@ -3,6 +3,7 @@ export const STORAGE_KEYS = {
   AUTH: {
     ACCESS_TOKEN: 'auth.accessToken',
     REFRESH_TOKEN: 'auth.refreshToken',
+    ANONYMOUS_ID: 'auth.anonymousId', // 添加匿名用户ID的键
     EXPIRES_IN: 'auth.expiresIn',
     TOKEN_TYPE: 'auth.tokenType',
   },

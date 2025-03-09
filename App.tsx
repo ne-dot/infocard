@@ -1,14 +1,9 @@
+
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import RootStack from './src/screen/';
-import { LoadingProvider } from './src/components/Loading';
+import Application from './src/';
 
 export default function App() {
   return (
-    <LoadingProvider>
-      <NavigationContainer>
-        <RootStack />
-      </NavigationContainer>
-     </LoadingProvider>
+    <Application />
   );
 }
