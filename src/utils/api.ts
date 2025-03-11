@@ -46,6 +46,7 @@ instance.interceptors.request.use(
       config.headers['X-App-Build'] = DeviceInfo.getBuildNumber();
       config.headers['X-App-Bundle-ID'] = DeviceInfo.getBundleId(); // 添加应用的 Bundle ID
     }
+    
 
     // 添加请求日志
     console.log(`🚀 发送请求: ${config.method?.toUpperCase()} ${config.url}`, {
