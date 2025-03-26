@@ -63,7 +63,7 @@ const ProfileScreen = () => {
             {t('profile.loginPrompt')}
           </Text>
           <TouchableOpacity
-            style={[styles.loginButton, { backgroundColor: colors.primay }]}
+            style={[styles.loginButton, { backgroundColor: colors.primary }]}
             onPress={() => navigateTo(Screens.Login)}
           >
             <Text style={styles.loginButtonText}>{t('profile.login')}</Text>
